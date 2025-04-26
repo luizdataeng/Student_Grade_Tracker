@@ -1,0 +1,14 @@
+{
+    "ID": "23",
+    "Name": "Luiz",
+    "Courses": [
+        "Math",
+        " Arts"
+    ],
+    "Scores": [
+        20,
+        40
+    ],
+    "Attendance": {},
+    "Remarks": []
+}
