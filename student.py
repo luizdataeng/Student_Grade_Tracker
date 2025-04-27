@@ -37,7 +37,7 @@ class StudentManager:
             "ID": student["ID"],
             "Name": student["Name"],
             "Courses": student["Courses"],
-            "Scores": {},
+            "Scores": [],
             "Attendance": {},
             "Remarks": []
         }
@@ -120,11 +120,13 @@ class StudentManager:
                 # Only save the specific student's data
                 if user_id in self.students:
                     json.dump(self.students[user_id], f, indent=4)
-                    print(f'Data saved successfully to {filepath}')
+                    return user_id
                 else:
                     print(f'Student ID {user_id} not found')
+                    return None
         except Exception as e:
             print(f'Error saving data: {e}')
+            return None
 
     def search_id_file(self, search_id: str) -> dict:
         """Search for a student file by ID in the student folder.

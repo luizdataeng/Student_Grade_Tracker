@@ -14,17 +14,7 @@ from student import StudentManager
 
 student = StudentManager()
 
-print(' ------ Welcome to Student Grade Tracker ------')
-print('''
--- Select the operation: 
-  1 for add student, 
-  2 for update scores, 
-  3 for average scores,
-  0 for exit
-''')
-
 while True:
-    user_input = input('Main Menu - Enter the number of the operation: ')
     print(' ------ Welcome to Student Grade Tracker ------')
     print('''
     -- Select the operation: 
@@ -33,18 +23,24 @@ while True:
     3 for average scores,
     0 for exit
     ''')
-
+    user_input = input('Main Menu - Enter the number of the operation: ')
+    
     if user_input == '1':
-        user = student.add_student({
-            "ID": input('Enter the student ID: '),
-            "Name": input('Enter the student name: '),
-            "Courses": input('Enter the courses (comma-separated): ').split(','),
-            "Scores": [],
-            "Attendance": {},
-            "Remarks": []
-        })
-        student.save_students_to_file(user['ID'])
-        
+        student_id = input('Enter the student ID: ')
+        if not student.search_id_file(student_id):
+            user = student.add_student({
+                "ID": student_id,
+                "Name": input('Enter the student name: '),
+                "Courses": input('Enter the courses (comma-separated): ').split(','),
+                "Scores": [],
+                "Attendance": {},
+                "Remarks": []
+            })
+            user_id = student.save_students_to_file(user['ID'])
+            print(f'Data saved successfully to student/{user_id}.json')
+        else:
+            print(f'Student ID {student_id} already exists')
+            
     elif user_input == '2':
         try:
             student_id = input('Enter the student ID: ')
