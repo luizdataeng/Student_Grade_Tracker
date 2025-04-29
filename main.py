@@ -21,25 +21,22 @@ while True:
     1 for add student, 
     2 for update scores, 
     3 for average scores,
+    4 for GPA,
     0 for exit
     ''')
     user_input = input('Main Menu - Enter the number of the operation: ')
     
     if user_input == '1':
-        student_id = input('Enter the student ID: ')
-        if not student.search_id_file(student_id):
-            user = student.add_student({
-                "ID": student_id,
+        user = student.add_student({
+                "ID": "",
                 "Name": input('Enter the student name: '),
                 "Courses": input('Enter the courses (comma-separated): ').split(','),
                 "Scores": [],
                 "Attendance": {},
                 "Remarks": []
-            })
-            user_id = student.save_students_to_file(user['ID'])
-            print(f'Data saved successfully to student/{user_id}.json')
-        else:
-            print(f'Student ID {student_id} already exists')
+        })
+        user_id = student.save_students_to_file(user['ID'])
+        print(f'Data saved successfully to student/{user_id}.json')
             
     elif user_input == '2':
         try:
@@ -75,9 +72,30 @@ while True:
         
         except Exception as e:
             print(f'\nError getting average scores: {e}')
+    elif user_input == '4':
+        try:
+            student_id = input('Enter the student ID: ')
+            if not student.search_id_file(student_id):
+                print(f'No student found with ID {student_id}')
+                
+            else:
+                print(f'GPA for student {student_id} is {student.calculate_gpa(student_id)}')
+
+        except Exception as e:
+            print(f'\nError getting GPA: {e}')
+    
+    elif user_input == '5':
+        try:
+            student_id = input('Enter the student ID: ')
+            if not student.search_id_file(student_id):
+                print(f'No student found with ID {student_id}')
+                
+            else:
+                student.analyze_trends(student_id)
+        except Exception as e:
+            print(f'\nError analyzing trends: {e}')
     
     elif user_input == '0':
         exit()
-
     else:
         print('Invalid input, please try again.')

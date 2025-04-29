@@ -12,7 +12,6 @@ with support for courses, scores, attendance, and remarks.
 
 import decimal
 
-
 class StudentManager:
     """Manages student records and operations.
     
@@ -23,25 +22,31 @@ class StudentManager:
     def __init__(self):
         self.students = {}
     
+    
+
     def add_student(self, student: dict) -> dict:
         """Add a new student to the system.
         
         Args:
             student (dict): Dictionary containing student information with
-                           ID, Name, and Courses fields.
+                           Name and Courses fields.
         
         Returns:
             dict: The complete student record with all fields initialized.
         """
+        import random
+    
+        student_id = str(random.randrange(100, 1000)).zfill(3)
+        print(student_id)
         new_student = {
-            "ID": student["ID"],
+            "ID": student_id,
             "Name": student["Name"],
             "Courses": student["Courses"],
             "Scores": [],
             "Attendance": {},
             "Remarks": []
         }
-        self.students[student["ID"]] = new_student
+        self.students[student_id] = new_student
         return new_student
 
     def update_scores(self, student_data: dict, scores: list) -> list:
@@ -91,12 +96,46 @@ class StudentManager:
                     return decimal.Decimal('0.00')
                 total = sum(scores)
                 avg = decimal.Decimal(str(total)) / decimal.Decimal(str(len(scores)))
-                return avg.quantize(decimal.Decimal('0.00'))
+                return avg
         except FileNotFoundError:
             print(f'No student found with ID {id}')
             return decimal.Decimal('0.00')
         except Exception as e:
             print(f'Error calculating average: {e}')
+            return decimal.Decimal('0.00')
+
+    def calculate_gpa(self, id: str) -> decimal.Decimal:
+        """Calculate the GPA for a student.
+        
+        Args:
+            id (str): Student ID
+        
+        Returns:
+            decimal.Decimal: GPA with 2 decimal places
+        """
+        import os
+        import json
+        
+        try:
+            scores = self.get_average_scores(id)
+            print('scores', scores)
+            if scores < 40:
+                gpa = 0
+            elif scores < 60:
+                gpa = 1
+            elif scores < 70:
+                gpa = 2
+            elif scores < 80:
+                gpa = 3
+            elif scores < 90:
+                gpa = 4
+            else: 
+                gpa = 5
+            
+            return gpa
+            # return decimal.Decimal(str(gpa))
+        except Exception as e:
+            print(f'Error calculating GPA: {e}')
             return decimal.Decimal('0.00')
 
     def save_students_to_file(self, user_id: str) -> None:
@@ -154,3 +193,35 @@ class StudentManager:
         except Exception as e:
             print(f'Error reading student file: {e}')
             return None
+        
+    def analyze_trends(self, id: str) -> None:
+        """Analyze trends for a student.
+        
+        Args:
+            id (str): Student ID
+        
+        Uses matplotlib to display a line graph of scores over time.
+        """
+        import matplotlib.pyplot as plt
+        import os
+        import json
+        
+        try:
+            filepath = os.path.join('student', f'{id}.json')
+            with open(filepath, 'r') as f:
+                student_data = json.load(f)
+                scores = student_data["Scores"]
+                if not scores:
+                    print('No scores found')
+                    return None
+                dates = [i for i in range(len(scores))]
+                plt.plot(dates, scores)
+                plt.xlabel('Date')
+                plt.ylabel('Score')
+                plt.title(f'Scores for {student_data["Name"]} {id}')
+                plt.show()
+        except FileNotFoundError:
+            print(f'No student found with ID {id}')
+        except Exception as e:
+            print(f'Error analyzing trends: {e}')
+    
